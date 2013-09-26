@@ -22,6 +22,10 @@ local vicious = require("vicious")
 local battery = require("battery")
 local clock = require("clock")
 local cpu = require("cpu")
+
+-- Not local as it will be used by owa-check.rb
+notification_box = require("notification_box")
+
 local ram = require("ram")
 local volume = require("volume")
 
@@ -65,7 +69,6 @@ end
 -- }}}
 
 -- {{{ Global variables
-
 home = os.getenv("HOME")
 confdir = home .. "/.config/awesome"
 -- scriptdir = confdir .. "/scripts/"
@@ -76,11 +79,21 @@ beautiful.init(active_theme .. "/theme.lua")
 -- }}
 
 
+-- {{{ Autorun
+local runonce = require("runonce")
+
+runonce.run("owa-check")
+runonce.run("firefox")
+-- }}}
+
 -- This is used later as the default terminal and editor to run.
 editor = os.getenv("EDITOR") or "vim"
 terminal = "sakura"
 editor_cmd = terminal .. " -e " .. editor
 filemgr = 'nautilus'
+
+-- Use unagi for transparency
+awful.util.spawn_with_shell("unagi &")
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -102,7 +115,7 @@ layouts =
     --awful.layout.suit.spiral,
     --awful.layout.suit.spiral.dwindle
     awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
+    --awful.layout.suit.max.fullscreen,
 }
 -- }}}
 
@@ -135,7 +148,7 @@ myawesomemenu = {
    { "manual", terminal .. " -e man awesome" },
    { "edit config", editor_cmd .. " " .. awesome.conffile },
    { "restart", awesome.restart },
-   { "quit", awesome.quit },
+   { "logout", awesome.quit },
    { "shutdown", "gnome-session-quit --power-off" }
 }
 
@@ -233,6 +246,7 @@ for s = 1, screen.count() do
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
     if s == 1 then
+        right_layout:add(notification_box)
         right_layout:add(wibox.widget.systray())
     end
     right_layout:add(cpu.icon)
@@ -269,7 +283,9 @@ end
 root.buttons(awful.util.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
-    awful.button({ }, 5, awful.tag.viewprev)
+    awful.button({ }, 5, awful.tag.viewprev),
+    awful.button({ }, 10, awful.tag.viewprev),
+    awful.button({ }, 13, awful.tag.viewnext)
 ))
 -- }}}
 
@@ -400,26 +416,82 @@ root.keys(globalkeys)
 -- }}}
 
 -- {{{ Rules
+-- Use "xprop" to determine the value of "class", http://awesome.nasquadah.org/wiki/Understanding_Rules
 awful.rules.rules = {
-    -- All clients will match this rule.
-    { rule = { },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     focus = true,
-                     keys = clientkeys,
-                     buttons = clientbuttons } },
-    { rule = { class = "MPlayer" },
-      properties = { floating = true } },
-    { rule = { class = "pinentry" },
-      properties = { floating = true } },
-    { rule = { class = "gimp" },
-      properties = { floating = true } },
-    -- Set Firefox to always map on tags number 1 of screen 1.
-    { rule = { class = "Firefox" },
-      properties = { tag = tags[1][1] } },
-    -- Set Pidgin to always map on tags number 2 of screen 1.
-    { rule = { class = "Pidgin" },
-      properties = { tag = tags[1][2] } },
+    {
+        -- All clients will match this rule.
+        rule = {
+        },
+        properties = {
+            border_width = beautiful.border_width,
+            border_color = beautiful.border_normal,
+            focus = true,
+            keys = clientkeys,
+            buttons = clientbuttons
+        }
+    },
+    {
+        -- CopyQ should always be floating
+        rule = {
+            class = "Copyq"
+        },
+        properties = {
+            floating = true,
+            width = 750,
+            height = 600
+        }
+    },
+    {
+        -- Firefox will always map on tags number 1 of screen 1.
+        rule = {
+            class = "Firefox"
+        },
+        properties = {
+            tag = tags[1][1]
+        }
+    },
+    {
+        rule = {
+            class = "gimp"
+        },
+        properties = {
+            floating = true
+        }
+    },
+    {
+        rule = {
+            class = "MPlayer"
+        },
+        properties = {
+            floating = true
+        }
+    },
+    {
+        rule = {
+            class = "pinentry"
+        },
+        properties = {
+            floating = true
+        }
+    },
+    {
+        -- Set Pidgin to always map on tags number 2 of screen 1.
+        rule = {
+            class = "Pidgin"
+        },
+        properties = {
+            tag = tags[1][2]
+        }
+    },
+    {
+        -- Set transparency on Sakura
+        rule = {
+            class = "Sakura"
+        },
+        properties = {
+            opacity = 0.9
+        }
+    },
 }
 -- }}}
 

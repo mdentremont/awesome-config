@@ -92,8 +92,8 @@ terminal = "sakura"
 editor_cmd = terminal .. " -e " .. editor
 filemgr = 'nautilus'
 
--- Use unagi for transparency
-awful.util.spawn_with_shell("unagi &")
+-- Use xcompmgr for transparency
+runonce.run("xcompmgr")
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -108,6 +108,7 @@ layouts =
     --awful.layout.suit.floating,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
+    awful.layout.suit.tile.right,
     awful.layout.suit.tile.bottom,
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,

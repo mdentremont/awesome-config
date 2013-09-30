@@ -490,7 +490,7 @@ awful.rules.rules = {
             class = "Sakura"
         },
         properties = {
-            opacity = 0.9
+            opacity = 0.95
         }
     },
 }

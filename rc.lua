@@ -36,10 +36,6 @@ local beautiful = require("beautiful")
 local menubar = require("menubar")
 local naughty = require("naughty")
 
--- Free desktop
-local freedesktop_menu = require('freedesktop.menu')
-local freedesktop_utils = require('freedesktop.utils')
-
 -- Load Debian menu entries
 local debug_menu = require("debian.menu")
 
@@ -139,10 +135,7 @@ end
 
 -- {{{ Menu
 
-freedesktop.utils.terminal = terminal
-freedesktop.utils.icon_theme = 'gnome'
-
-menu_items = freedesktop_menu.new()
+menu_items = {}
 
 -- Create a laucher widget and a main menu
 myawesomemenu = {
@@ -490,7 +483,7 @@ awful.rules.rules = {
             class = "Sakura"
         },
         properties = {
-            opacity = 0.95
+            opacity = 0.9
         }
     },
 }

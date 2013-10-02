@@ -486,6 +486,15 @@ awful.rules.rules = {
             opacity = 0.9
         }
     },
+    {
+        -- Remove synapse border
+        rule = {
+            class = "Synapse"
+        },
+        properties = {
+            border_width = 0
+        }
+    },
 }
 -- }}}
 
